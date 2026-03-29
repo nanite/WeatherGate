@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "weathergate:block/snow_catcher"
+  }
+}

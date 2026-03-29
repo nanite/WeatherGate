@@ -5,6 +5,7 @@ import com.unrealdinnerbone.weathergate.WeatherGate;
 import com.unrealdinnerbone.weathergate.WeatherGateCodecs;
 import com.unrealdinnerbone.weathergate.modifers.base.AbstactColorTerrainModifier;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
+import dev.ftb.mods.ftblibrary.icon.Icon;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;

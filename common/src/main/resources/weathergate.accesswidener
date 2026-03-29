@@ -2,3 +2,4 @@ accessWidener v1 official
 mutable field net/minecraft/client/renderer/BiomeColors GRASS_COLOR_RESOLVER Lnet/minecraft/world/level/ColorResolver;
 mutable field net/minecraft/client/renderer/BiomeColors FOLIAGE_COLOR_RESOLVER Lnet/minecraft/world/level/ColorResolver;
 mutable field net/minecraft/client/renderer/BiomeColors WATER_COLOR_RESOLVER Lnet/minecraft/world/level/ColorResolver;
+mutable field net/minecraft/client/renderer/BiomeColors DRY_FOLIAGE_COLOR_RESOLVER Lnet/minecraft/world/level/ColorResolver;

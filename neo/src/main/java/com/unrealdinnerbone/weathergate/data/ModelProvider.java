@@ -18,6 +18,7 @@ public class ModelProvider extends net.minecraft.client.data.models.ModelProvide
         blockModels.createTrivialCube(WeatherGateRegistry.SNOW_CATCHER.get());
         blockModels.createTrivialCube(WeatherGateRegistry.TERIANN_CONTROLLER.get());
 
+
 //        itemModels.
     }
 

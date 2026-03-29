@@ -38,4 +38,9 @@ public class ColorModifier extends AbstactColorTerrainModifier implements Enviro
     public Integer getAttributeValue(Color4I value) {
         return value.rgb();
     }
+
+    @Override
+    public EnvironmentAttribute<Integer> attribute() {
+        return attribute;
+    }
 }

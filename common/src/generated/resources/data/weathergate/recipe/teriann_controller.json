@@ -2,18 +2,10 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:oak_sapling"
-    },
-    "G": {
-      "item": "minecraft:grass_block"
-    },
-    "O": {
-      "tag": "minecraft:leaves"
-    },
-    "W": {
-      "item": "minecraft:water_bucket"
-    }
+    "B": "minecraft:oak_sapling",
+    "G": "minecraft:grass_block",
+    "O": "#minecraft:leaves",
+    "W": "minecraft:water_bucket"
   },
   "pattern": [
     "OOO",
@@ -21,7 +13,6 @@
     "GGG"
   ],
   "result": {
-    "count": 1,
     "id": "weathergate:terrain_controller"
   }
 }

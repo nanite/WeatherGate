@@ -43,6 +43,7 @@ public class WeatherGateClient
             BiomeColors.FOLIAGE_COLOR_RESOLVER = createForType(BiomeColors.FOLIAGE_COLOR_RESOLVER, TerrainModifiers.FOLIAGE);
         }
         BiomeColors.WATER_COLOR_RESOLVER = createForType(BiomeColors.WATER_COLOR_RESOLVER, TerrainModifiers.WATER);
+        BiomeColors.DRY_FOLIAGE_COLOR_RESOLVER = createForType(BiomeColors.DRY_FOLIAGE_COLOR_RESOLVER, TerrainModifiers.DRY_FOLIAGE);
     }
 
 

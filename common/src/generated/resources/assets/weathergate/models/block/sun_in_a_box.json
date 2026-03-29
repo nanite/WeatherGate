@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "weathergate:block/sun_in_a_box"
-  }
-}
