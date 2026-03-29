@@ -13,8 +13,15 @@ sourceSets.main.resources { srcDir project(":common").file('src/generated/resour
 
 dependencies {
     implementation("com.unrealdinnerbone:trenzalore-neo:${project.property("trenzalore_version")}+mc${project.property("minecraft_version")}")
-    implementation "dev.ftb.mods:ftb-library-neoforge:${project.property("ftb_lib_version")}"
-    implementation "curse.maven:serene-seasons-291874:5429913"
-    implementation "curse.maven:glitchcore-955399:5483773"
+    implementation("dev.ftb.mods:ftb-library-neoforge:${project.property("ftb_lib_version")}") {
+        exclude module: 'me.shedaniel:RoughlyEnoughItems-neoforge'
+    }
+}
+
+
+dependencies {
+//    implementation "dev.ftb.mods:ftb-library-neoforge:${project.property("ftb_lib_version")}"
+//    implementation "curse.maven:serene-seasons-291874:5429913"
+//    implementation "curse.maven:glitchcore-955399:5483773"
 }
 

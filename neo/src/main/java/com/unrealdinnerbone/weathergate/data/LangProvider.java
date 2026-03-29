@@ -1,7 +1,7 @@
 package com.unrealdinnerbone.weathergate.data;
 
 import com.unrealdinnerbone.weathergate.WeatherGate;
-import com.unrealdinnerbone.weathergate.util.Type;
+//import com.unrealdinnerbone.weathergate.util.Type;
 import com.unrealdinnerbone.weathergate.WeatherGateRegistry;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
@@ -16,11 +16,10 @@ public class LangProvider extends LanguageProvider {
     protected void addTranslations() {
         add(WeatherGateRegistry.SNOW_CATCHER.get(), "Snow Catcher");
         add(WeatherGateRegistry.TERIANN_CONTROLLER.get(), "Teriann Controller");
-        add(WeatherGateRegistry.SUN_IN_A_BOX.get(), "Sun In A Box");
         add("block.weathergate.terrain_controller.no_data", "No Data Found! Replace Block and Try Again!");
         add("weathergate.sun_in_a_box.tooltip", "Make Sun Light value always noon (Client Only)");
-        add(Type.GRASS.getLangKey(), "Grass");
-        add(Type.FOLIAGE.getLangKey(), "Foliage");
-        add(Type.WATER.getLangKey(), "Water");
+//        add(Type.GRASS.getLangKey(), "Grass");
+//        add(Type.FOLIAGE.getLangKey(), "Foliage");
+//        add(Type.WATER.getLangKey(), "Water");
     }
 }

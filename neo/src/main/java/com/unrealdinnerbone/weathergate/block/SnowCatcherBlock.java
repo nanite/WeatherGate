@@ -8,14 +8,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.Nullable;
 
 public class SnowCatcherBlock extends Block {
 
-    public SnowCatcherBlock() {
-        super(Properties.of().mapColor(MapColor.SNOW).requiresCorrectToolForDrops().strength(5f).sound(SoundType.SNOW));
+    public SnowCatcherBlock(BlockBehaviour.Properties properties) {
+        super(properties);
     }
 
 
@@ -27,10 +28,7 @@ public class SnowCatcherBlock extends Block {
     }
 
     @Override
-    public void onRemove(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
-        if(!blockState.is(blockState2.getBlock()) && level instanceof ServerLevel serverLevel) {
-            SnowCatcherAttachment.removeBlockPos(serverLevel, blockPos);
-        }
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+        SnowCatcherAttachment.removeBlockPos(level, pos);
     }
-
 }

@@ -6,9 +6,7 @@ multiLoader.common()
 
 publishing.publications.mavenJava.from components.java
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
-
-
 dependencies {
     implementation("com.unrealdinnerbone:trenzalore-common:${project.property("trenzalore_version")}+mc${project.property("minecraft_version")}")
+    implementation("dev.ftb.mods:ftb-library:${rootProject.ftb_lib_version}")
 }

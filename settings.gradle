@@ -1,26 +1,37 @@
 pluginManagement {
     repositories {
-        mavenLocal()
         gradlePluginPortal()
+        mavenLocal()
         maven {
-            name = 'Creeperhost'
-            url = 'https://maven.creeperhost.net/'
+            name = "NeoForge"
+            url = "https://maven.neoforged.net/"
+        }
+        maven {
+            name = "Fabric"
+            url = "https://maven.fabricmc.net/"
         }
         maven {
             name = 'Sponge Snapshots'
             url = 'https://repo.spongepowered.org/repository/maven-public/'
         }
+        maven {
+            url "https://maven.ftb.dev/releases"
+            content {
+                includeGroup "dev.ftb.mods"
+            }
+        }
+        maven {
+            url "https://maven.ftb.dev/snapshots"
+            content {
+                includeGroup "dev.ftb.mods"
+            }
+        }
     }
-
-
-    plugins {
-        id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7" apply(false)
-        id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
-    }
-
 }
 
 
-
+plugins {
+    id "org.jetbrains.gradle.plugin.idea-ext" version "1.4.1" apply(false)
+}
 
 include("common", "neo")

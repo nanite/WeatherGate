@@ -4,11 +4,10 @@ plugins {
     id 'dev.nanite.mlp'
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 def isASnapshot = providers.environmentVariable("SNAPSHOT").map {it == "true"}.getOrElse(false)
 version = "${mod_version}+mc${minecraft_version}${isASnapshot ? '-SNAPSHOT' : ''}"
-setArchivesBaseName("${mod_name}-${project.name}".toLowerCase())
 group = "${maven_group}"
 
 idea {
@@ -24,22 +23,22 @@ base {
 
 repositories {
     maven {
-        name = "NeoForge"
-        url = "https://maven.neoforged.net/"
-    }
-    maven {
         name = "Nanite"
         url = "https://maven.nanite.dev/releases"
     }
     maven {
-        name = "Nanite"
-        url = "https://maven.ftb.dev/snapshots"
+        name = "NeoForge"
+        url = "https://maven.neoforged.net/"
     }
     maven {
-        url "https://maven.architectury.dev/"
+        name = "Fabric"
+        url = "https://maven.fabricmc.net/"
     }
     maven {
-        url "https://cursemaven.com"
+        url "https://maven.ftb.dev/snapshots"
+        content {
+            includeGroup "dev.ftb.mods"
+        }
     }
 }
 
@@ -67,7 +66,7 @@ publishing {
     publications {
         register("mavenJava", MavenPublication) {
             groupId project.group
-            artifactId project.getArchivesBaseName()
+            setArtifactId("${mod_name}-${project.name}".toLowerCase())
         }
     }
 }

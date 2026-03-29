@@ -1,10 +1,8 @@
 package com.unrealdinnerbone.weathergate.util;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 
-public class RangeUtils
-{
+public class RangeUtils {
     public static boolean isWithinRange(Vec3i pos1, Vec3i pos2, int range) {
         return isWithinRange(pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(), range);
     }
