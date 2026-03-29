@@ -19,7 +19,7 @@ public class EditButton<B> extends SimpleButton {
     private B activeValue;
     private final Component name;
 
-    public EditButton(TerrainControllerScreen2 screen2, Panel panel, TerrainModifier<B> terrainModifier, B activeValue, Consumer<B> newValueApplier) {
+    public EditButton(TerrainControllerScreen screen2, Panel panel, TerrainModifier<B> terrainModifier, B activeValue, Consumer<B> newValueApplier) {
         this.terrainModifier = terrainModifier;
         this.activeValue = activeValue;
         Component name = Component.translatable(terrainModifier.id().toLanguageKey() + ".info");

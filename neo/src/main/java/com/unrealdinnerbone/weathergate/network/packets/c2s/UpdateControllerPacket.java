@@ -1,5 +1,7 @@
 package com.unrealdinnerbone.weathergate.network.packets.c2s;
 
+import com.unrealdinnerbone.weathergate.level.attachments.terrain.ControllerData;
+import com.unrealdinnerbone.weathergate.level.attachments.terrain.StoredData;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -12,17 +14,14 @@ import net.minecraft.server.level.ServerLevel;
 import java.util.HashMap;
 import java.util.Map;
 
-public record UpdateControllerPacket(
-        GlobalPos globalPos,
-        TerrainControllerAttachment.StoredData updateMap
-) implements CustomPacketPayload {
+public record UpdateControllerPacket(GlobalPos globalPos, ControllerData data) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<UpdateControllerPacket> TYPE =
             new CustomPacketPayload.Type<>(WeatherGate.id("update_controller_packet"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, UpdateControllerPacket> CODEC = StreamCodec.composite(
             GlobalPos.STREAM_CODEC, UpdateControllerPacket::globalPos,
-            TerrainControllerAttachment.StoredData.STREAM_CODEC, UpdateControllerPacket::updateMap,
+            ControllerData.STREAM_CODEC, UpdateControllerPacket::data,
             UpdateControllerPacket::new
     );
 
@@ -32,8 +31,7 @@ public record UpdateControllerPacket(
                 return;
             }
             TerrainControllerAttachment attachment = TerrainControllerAttachment.getAttachment(serverLevel);
-            TerrainControllerAttachment.StoredData map = attachment.data().computeIfAbsent(packet.globalPos().pos(), ignored -> new TerrainControllerAttachment.StoredData(new HashMap<>()));
-            map.modifiers().putAll(packet.updateMap.modifiers());
+            attachment.setData(packet.globalPos().pos(), packet.data());
             attachment.save(serverLevel);
         });
     }

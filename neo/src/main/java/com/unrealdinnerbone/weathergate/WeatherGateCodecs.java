@@ -3,6 +3,7 @@ package com.unrealdinnerbone.weathergate;
 import com.mojang.serialization.Codec;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 
@@ -23,4 +24,10 @@ public class WeatherGateCodecs
             output.writeFloat(value);
         }
     };
+
+    public static final Codec<BlockPos> BLOCK_POS_CODEC = Codec.STRING.xmap(
+            s -> BlockPos.of(Long.parseLong(s)),
+            pos -> Long.toString(pos.asLong())
+    );
+
 }

@@ -33,7 +33,7 @@ public class WeatherGateRegistry implements IRegistry {
             AttachmentType.builder(() -> SnowCatcherAttachment.EMPTY).serialize(SnowCatcherAttachment.MAP_CODEC).sync(SnowCatcherAttachment.STREAM_CODEC).build());
 
 
-    public static final RegistryEntry<AttachmentType<?>, AttachmentType<TerrainControllerAttachment>> TERIANN_CONTROLLER_ATTACHMENT = ATTACHMENT_TYPE.register("terrain_controllers", () ->
+    public static final RegistryEntry<AttachmentType<?>, AttachmentType<TerrainControllerAttachment>> TERIANN_CONTROLLER_ATTACHMENT = ATTACHMENT_TYPE.register("terrain_modifiers", () ->
             AttachmentType.builder(() -> TerrainControllerAttachment.EMPTY).serialize(TerrainControllerAttachment.MAP_CODEC).sync(TerrainControllerAttachment.STREAM_CODEC).build());
 
     public static final RegistryEntry.BlockEntry<SnowCatcherBlock> SNOW_CATCHER = BLOCKS.register("snow_catcher", SnowCatcherBlock::new, properties -> properties.mapColor(MapColor.SNOW).requiresCorrectToolForDrops().strength(5f).sound(SoundType.SNOW));

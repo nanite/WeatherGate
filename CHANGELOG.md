@@ -1,3 +1,7 @@
-### 1.0.6
+### 26.1.0.1
 
-- Add Tooltip to Sun in A Box
+- Broke Existing Settings
+- Fix Lang Keys
+- Add Settings for Global and Per Modifier
+- Add Range Setting for Block
+- Add Reset For Global and Per Modifier

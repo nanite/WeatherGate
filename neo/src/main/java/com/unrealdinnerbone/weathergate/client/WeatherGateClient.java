@@ -3,6 +3,8 @@ package com.unrealdinnerbone.weathergate.client;
 import com.unrealdinnerbone.weathergate.client.compact.SereneSeasonsCompact;
 import com.unrealdinnerbone.weathergate.block.TerrainControllerBlock;
 import com.unrealdinnerbone.weathergate.level.attachments.TerrainControllerAttachment;
+import com.unrealdinnerbone.weathergate.level.attachments.terrain.ControllerData;
+import com.unrealdinnerbone.weathergate.level.attachments.terrain.StoredData;
 import com.unrealdinnerbone.weathergate.registry.TerrainModifiers;
 import com.unrealdinnerbone.weathergate.modifers.base.TerrainModifier;
 import com.unrealdinnerbone.weathergate.util.RangeUtils;
@@ -58,10 +60,10 @@ public class WeatherGateClient
     public static <T> Optional<T> getDataForPosition(Level level, int x, int z, TerrainModifier<T> type) {
         TerrainControllerAttachment terrainControllerAttachment = TerrainControllerAttachment.getAttachment(level);
         if(terrainControllerAttachment != null) {
-            for (Map.Entry<BlockPos, TerrainControllerAttachment.StoredData> blockPosMapEntry : terrainControllerAttachment.data().entrySet()) {
+            for (Map.Entry<BlockPos, ControllerData> blockPosMapEntry : terrainControllerAttachment.entrySet()) {
                 BlockPos key = blockPosMapEntry.getKey();
-                if(RangeUtils.isWithinRange(key.getX(), key.getZ(), x, z, TerrainControllerBlock.RANGE)) {
-                    return Optional.ofNullable(terrainControllerAttachment.getData(key, type));
+                if(RangeUtils.isWithinRange(key.getX(), key.getZ(), x, z, blockPosMapEntry.getValue().getRange())) {
+                    return Optional.ofNullable(terrainControllerAttachment.getModifierValue(key, type));
                 }
             }
         }

@@ -10,6 +10,9 @@ publishing.publications.mavenJava.from components.java
 
 sourceSets.main.resources { srcDir project(":common").file('src/generated/resources') }
 
+jar {
+    from project(":common").sourceSets.main.output
+}
 
 dependencies {
     implementation("com.unrealdinnerbone:trenzalore-neo:${project.property("trenzalore_version")}+mc${project.property("minecraft_version")}")

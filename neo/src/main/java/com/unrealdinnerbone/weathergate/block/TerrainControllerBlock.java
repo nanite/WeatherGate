@@ -1,6 +1,5 @@
 package com.unrealdinnerbone.weathergate.block;
 
-import com.unrealdinnerbone.weathergate.level.attachments.TerrainControllerAttachment;
 import com.unrealdinnerbone.weathergate.network.packets.s2c.OpenTerrainControllerPacket;
 import com.unrealdinnerbone.weathergate.server.TerrainManager;
 import net.minecraft.core.BlockPos;
@@ -15,11 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.Map;
-
 public class TerrainControllerBlock extends Block{
-
-    public static final int RANGE = 64;
 
     public TerrainControllerBlock(BlockBehaviour.Properties properties) {
         super(properties);
