@@ -19,11 +19,10 @@ import net.minecraft.world.attribute.EnvironmentAttribute;
 
 import java.util.function.Consumer;
 
-public class ColorModifier implements TerrainModifier<Color4I> {
+public class BasicColorModifier implements TerrainModifier<Color4I> {
 
-    private final TerrainModifierType<Color4I, ColorModifier> type;
+    private final TerrainModifierType<Color4I, BasicColorModifier> type;
     private final Color4I value;
-    private final EnvironmentAttribute<Integer> attribute;
     private final boolean enabled;
 
     public record Data(Color4I value, boolean enabled) {
@@ -42,10 +41,9 @@ public class ColorModifier implements TerrainModifier<Color4I> {
         );
     }
 
-    public ColorModifier(TerrainModifierType<Color4I, ColorModifier> type, Color4I value, EnvironmentAttribute<Integer> attribute, boolean enabled) {
+    public BasicColorModifier(TerrainModifierType<Color4I, BasicColorModifier> type, Color4I value, boolean enabled) {
         this.type = type;
         this.value = value;
-        this.attribute = attribute;
         this.enabled = enabled;
     }
 
@@ -85,12 +83,12 @@ public class ColorModifier implements TerrainModifier<Color4I> {
 
     @Override
     public TerrainModifier<Color4I> withValue(Color4I value) {
-        return new ColorModifier(type, value, attribute, enabled);
+        return new BasicColorModifier(type, value, enabled);
     }
 
     @Override
     public TerrainModifier<Color4I> withEnabled(boolean enabled) {
-        return new ColorModifier(type, value, attribute, enabled);
+        return new BasicColorModifier(type, value, enabled);
     }
 
     public Data data() {

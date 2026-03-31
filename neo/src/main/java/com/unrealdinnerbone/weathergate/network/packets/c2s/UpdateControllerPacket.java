@@ -1,7 +1,6 @@
 package com.unrealdinnerbone.weathergate.network.packets.c2s;
 
 import com.unrealdinnerbone.weathergate.level.attachments.terrain.ControllerData;
-import com.unrealdinnerbone.weathergate.level.attachments.terrain.StoredData;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.neoforge.network.handling.IPayloadContext;

@@ -1,17 +1,16 @@
 package com.unrealdinnerbone.weathergate.client.screen;
 
+import com.unrealdinnerbone.weathergate.WeatherGateRegistries;
 import com.unrealdinnerbone.weathergate.level.attachments.TerrainControllerAttachment;
 import com.unrealdinnerbone.weathergate.level.attachments.terrain.ControllerData;
-import com.unrealdinnerbone.weathergate.level.attachments.terrain.ModifierState;
-import com.unrealdinnerbone.weathergate.level.attachments.terrain.StoredData;
 import com.unrealdinnerbone.weathergate.modifers.base.TerrainModifier;
+import com.unrealdinnerbone.weathergate.modifers.types.TerrainModifierType;
 import com.unrealdinnerbone.weathergate.network.packets.c2s.UpdateControllerPacket;
-import com.unrealdinnerbone.weathergate.registry.TerrainModifiers;
+import com.unrealdinnerbone.weathergate.registry.ModifierTypes;
 import dev.ftb.mods.ftblibrary.client.gui.screens.AbstractButtonListScreen;
 import dev.ftb.mods.ftblibrary.client.gui.theme.NordColors;
 import dev.ftb.mods.ftblibrary.client.gui.widget.BaseScreen;
 import dev.ftb.mods.ftblibrary.client.gui.widget.ContextMenuItem;
-import dev.ftb.mods.ftblibrary.client.gui.widget.IntTextBox;
 import dev.ftb.mods.ftblibrary.client.gui.widget.Panel;
 import dev.ftb.mods.ftblibrary.client.gui.widget.SimpleButton;
 import dev.ftb.mods.ftblibrary.client.gui.widget.TextBox;
@@ -28,7 +27,6 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,11 +42,12 @@ public class TerrainControllerScreen extends AbstractButtonListScreen implements
         Biome biome = level.getBiome(blockPos).value();
         this.data = TerrainControllerAttachment.getAttachment(level).getData(blockPos);
 
-        for (TerrainModifier<?> terrainModifier : TerrainModifiers.MODIFIERS_REGISTRY) {
-            if (data.getStoredData().modifiers().containsKey(terrainModifier)) {
+        for (TerrainModifierType<?, ?> terrainModifier : WeatherGateRegistries.REGISTRY) {
+            if (data.getModifiers().containsKey(terrainModifier)) {
                 continue;
             }
-            data.getStoredData().modifiers().put(terrainModifier, new ModifierState<>(terrainModifier.isEnabledByDefault(), terrainModifier.getDefaultValue(level, biome, blockPos)));
+            TerrainModifier<?> modifier = terrainModifier.create(level, biome, blockPos);
+            data.getModifiers().put(terrainModifier, modifier);
         }
 
         setWidth(210);
@@ -58,8 +57,8 @@ public class TerrainControllerScreen extends AbstractButtonListScreen implements
     }
 
     @NotNull
-    private <T> SimpleButton createSimpleButton(Panel panel, TerrainModifier<T> modifier, ModifierState<T> state) {
-        return new EditButton<>(this, panel, modifier, state.value(), value -> sendUpdate(modifier, state.withValue(value)));
+    private <T> SimpleButton createSimpleButton(Panel panel, TerrainModifier<T> modifier, TerrainModifierType<T, ?> state) {
+        return new EditButton<>(this, panel, state, modifier, modifier.getValue(), value -> sendUpdate(state, modifier.withValue(value)));
     }
 
     @Override
@@ -72,11 +71,11 @@ public class TerrainControllerScreen extends AbstractButtonListScreen implements
 
     @Override
     public void addButtons(Panel panel) {
-        data.getStoredData().modifiers().entrySet().stream()
-                .sorted(Map.Entry.comparingByKey(Comparator.comparing(TerrainModifier::id)))
+        data.getModifiers().entrySet().stream()
+                .sorted(Map.Entry.comparingByKey(Comparator.comparing(ModifierTypes::getId)))
                 .forEachOrdered(entry -> {
-                    TerrainModifier<?> modifier = entry.getKey();
-                    ModifierState<?> state = entry.getValue();
+                    TerrainModifierType<?, ?> modifier = entry.getKey();
+                    TerrainModifier<?> state = entry.getValue();
                     panel.add(new ModifierRow(panel, modifier, state));
                 });
     }
@@ -91,23 +90,23 @@ public class TerrainControllerScreen extends AbstractButtonListScreen implements
         private final SimpleButton modifierButton;
         private final SimpleButton resetButton;
         private final Component searchText;
-        private ModifierState<T> state;
+        private TerrainModifier<T> state;
 
-        ModifierRow(Panel parent, TerrainModifier<T> modifier, ModifierState<T> state) {
+        ModifierRow(Panel parent, TerrainModifierType<T, ?> modifier, TerrainModifier<T> state) {
             super(parent);
-            this.searchText = Component.translatable(modifier.id().toLanguageKey());
+            this.searchText = Component.translatable(ModifierTypes.getId(modifier).toLanguageKey());
             this.state = state;
-            toggleButton = new ImprovedToggleableButton(this, state.enabled(), Icons.ACCEPT, Icons.CANCEL, (widget, newState) -> {
+            toggleButton = new ImprovedToggleableButton(this, state.isEnabled(), Icons.ACCEPT, Icons.CANCEL, (widget, newState) -> {
                 this.state = state.withEnabled(newState);
                 sendUpdate(modifier, this.state);
             });
             this.resetButton = BetterButton.simple(this, Component.literal("Settings"), Icons.SETTINGS, () -> openContextMenu(List.of(
                     new ContextMenuItem(Component.literal("Reset to Default"), Icons.REFRESH, (btn) -> {
-                        this.state = state.withValue(modifier.getDefaultValue(Minecraft.getInstance().level, Minecraft.getInstance().level.getBiome(blockPos).value(), blockPos));
+                        this.state = modifier.create(Minecraft.getInstance().level, Minecraft.getInstance().level.getBiome(blockPos).value(), blockPos);
                         sendUpdate(modifier, this.state);
                     })
             )));
-            modifierButton = createSimpleButton( this, modifier, state);
+            modifierButton = createSimpleButton( this, state, modifier);
             setHeight(16);
             setWidth(TerrainControllerScreen.this.width - 16 - 20);
         }
@@ -144,8 +143,7 @@ public class TerrainControllerScreen extends AbstractButtonListScreen implements
             super();
             this.settingsButton = BetterButton.simple(this, Component.literal("Settings"), Icons.SETTINGS, () -> openContextMenu(List.of(
                     new ContextMenuItem(Component.literal("Reset All to Default"), Icons.REFRESH, (btn) -> {
-                        StoredData storedData = data.getStoredData();
-                        storedData.modifiers().clear();
+                        data.getModifiers().clear();
                         GlobalPos controllerPos = GlobalPos.of(Minecraft.getInstance().player.level().dimension(), blockPos);
                         ClientPacketDistributor.sendToServer(new UpdateControllerPacket(controllerPos, data));
                         Minecraft.getInstance().levelRenderer.allChanged();
@@ -187,11 +185,11 @@ public class TerrainControllerScreen extends AbstractButtonListScreen implements
         }
     }
 
-    private void sendUpdate(TerrainModifier<?> modifier, ModifierState<?> newState) {
-        data.getStoredData().modifiers().put(modifier, newState);
+    private <T> void sendUpdate(TerrainModifierType<T, ?> type, TerrainModifier<T> modifier) {
+        data.getModifiers().put(type, modifier);
         GlobalPos controllerPos = GlobalPos.of(Minecraft.getInstance().player.level().dimension(), blockPos);
         ClientPacketDistributor.sendToServer(new UpdateControllerPacket(controllerPos, data));
-        if (modifier.requireReRender()) {
+        if (type.requireReRender()) {
             Minecraft.getInstance().levelRenderer.allChanged();
         }
         this.refreshWidgets();

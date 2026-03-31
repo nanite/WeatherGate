@@ -1,67 +1,96 @@
 package com.unrealdinnerbone.weathergate.modifers;
 
-import com.unrealdinnerbone.weathergate.WeatherGate;
-import com.unrealdinnerbone.weathergate.modifers.base.AbstactFloatTerrainModifier;
-import com.unrealdinnerbone.weathergate.modifers.base.EnvironmentAttributeModifier;
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.unrealdinnerbone.weathergate.client.screen.FloatEditPanel;
+import com.unrealdinnerbone.weathergate.modifers.base.TerrainModifier;
+import com.unrealdinnerbone.weathergate.modifers.types.FloatEnvironmentType;
+import com.unrealdinnerbone.weathergate.modifers.types.TerrainModifierType;
+import dev.ftb.mods.ftblibrary.client.gui.widget.ModalPanel;
+import dev.ftb.mods.ftblibrary.client.gui.widget.Panel;
+import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftblibrary.icon.Icons;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.attribute.EnvironmentAttribute;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
 
-public class FloatModifier extends AbstactFloatTerrainModifier implements EnvironmentAttributeModifier<Float, Float> {
+import java.util.function.Consumer;
 
-    protected final EnvironmentAttribute<Float> attribute;
-    private final Identifier id;
-    private final float minValue;
-    private final float maxValue;
+public class FloatModifier implements TerrainModifier<Float> {
 
-    FloatModifier(EnvironmentAttribute<Float> attribute, Identifier identifier, float minValue, float maxValue) {
+    private final FloatEnvironmentType type;
+    private final float value;
+    private final EnvironmentAttribute<Float> attribute;
+    private final boolean enabled;
+
+    public record Data(float value, boolean enabled) {
+
+        public static final MapCodec<Data> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                Codec.FLOAT.fieldOf("value").forGetter(Data::value),
+                Codec.BOOL.fieldOf("enabled").forGetter(Data::enabled)
+        ).apply(instance, Data::new));
+
+        public static final StreamCodec<? super ByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.FLOAT,
+                Data::value,
+                ByteBufCodecs.BOOL,
+                Data::enabled,
+                Data::new
+        );
+    }
+
+    public FloatModifier(FloatEnvironmentType type, float value, EnvironmentAttribute<Float> attribute, boolean enabled) {
+        this.type = type;
+        this.value = value;
         this.attribute = attribute;
-        this.id = identifier;
-        this.minValue = minValue;
-        this.maxValue = maxValue;
+        this.enabled = enabled;
     }
 
-    public static FloatModifier of(String id, EnvironmentAttribute<Float> attribute, float minValue, float maxValue) {
-        return new FloatModifier(attribute, WeatherGate.id(id), minValue, maxValue);
-    }
-
-    public static FloatModifier of(String id, EnvironmentAttribute<Float> attribute) {
-        return of(id, attribute, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY);
-    }
-
-    public static FloatModifier nonNegative(String id, EnvironmentAttribute<Float> attribute) {
-        return of(id, attribute, 0, Float.POSITIVE_INFINITY);
+    public Data data() {
+        return new Data(value, enabled);
     }
 
     @Override
-    public float getMinValue() {
-        return minValue;
+    public TerrainModifierType<Float, ?> type() {
+        return this.type;
     }
 
     @Override
-    public float getMaxValue() {
-        return maxValue;
+    public boolean isEnabled() {
+        return this.enabled;
     }
 
     @Override
-    public Float getDefaultValue(Level level, Biome biome, BlockPos pos) {
-        return level.environmentAttributes().getValue(this.attribute, pos);
+    public ModalPanel createEditPanel(Panel basePanel, Float activeValue, Consumer<Float> newValueApplier) {
+        FloatEditPanel floatEditPanel = new FloatEditPanel(basePanel, activeValue, newValueApplier);
+        floatEditPanel.setLimits(this.type.getMin(), this.type.getMax());
+        return floatEditPanel;
     }
 
     @Override
-    public Identifier id() {
-        return id;
-    }
-
-    @Override
-    public Float getAttributeValue(Float value) {
+    public Float getValue() {
         return value;
     }
 
     @Override
-    public EnvironmentAttribute<Float> attribute() {
-        return attribute;
+    public Icon<?> getIcon(Float value) {
+        return Icons.INFO;
     }
+
+    public float value() {
+        return this.value;
+    }
+
+    @Override
+    public TerrainModifier<Float> withValue(Float value) {
+        return new FloatModifier(type, value, attribute, enabled);
+    }
+
+    @Override
+    public TerrainModifier<Float> withEnabled(boolean enabled) {
+        return new FloatModifier(type, value, attribute, enabled);
+    }
+
 }

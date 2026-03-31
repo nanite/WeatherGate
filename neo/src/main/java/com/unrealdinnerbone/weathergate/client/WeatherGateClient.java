@@ -1,12 +1,10 @@
 package com.unrealdinnerbone.weathergate.client;
 
 import com.unrealdinnerbone.weathergate.client.compact.SereneSeasonsCompact;
-import com.unrealdinnerbone.weathergate.block.TerrainControllerBlock;
 import com.unrealdinnerbone.weathergate.level.attachments.TerrainControllerAttachment;
 import com.unrealdinnerbone.weathergate.level.attachments.terrain.ControllerData;
-import com.unrealdinnerbone.weathergate.level.attachments.terrain.StoredData;
-import com.unrealdinnerbone.weathergate.registry.TerrainModifiers;
-import com.unrealdinnerbone.weathergate.modifers.base.TerrainModifier;
+import com.unrealdinnerbone.weathergate.modifers.types.TerrainModifierType;
+import com.unrealdinnerbone.weathergate.registry.ModifierTypes;
 import com.unrealdinnerbone.weathergate.util.RangeUtils;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import net.minecraft.client.Minecraft;
@@ -41,23 +39,23 @@ public class WeatherGateClient
 
     public static void injectResolvers(boolean basic) {
         if(basic) {
-            BiomeColors.GRASS_COLOR_RESOLVER = createForType(BiomeColors.GRASS_COLOR_RESOLVER, TerrainModifiers.GRASS);
-            BiomeColors.FOLIAGE_COLOR_RESOLVER = createForType(BiomeColors.FOLIAGE_COLOR_RESOLVER, TerrainModifiers.FOLIAGE);
+            BiomeColors.GRASS_COLOR_RESOLVER = createForType(BiomeColors.GRASS_COLOR_RESOLVER, ModifierTypes.GRASS.get());
+            BiomeColors.FOLIAGE_COLOR_RESOLVER = createForType(BiomeColors.FOLIAGE_COLOR_RESOLVER, ModifierTypes.FOLIAGE.get());
         }
-        BiomeColors.WATER_COLOR_RESOLVER = createForType(BiomeColors.WATER_COLOR_RESOLVER, TerrainModifiers.WATER);
-        BiomeColors.DRY_FOLIAGE_COLOR_RESOLVER = createForType(BiomeColors.DRY_FOLIAGE_COLOR_RESOLVER, TerrainModifiers.DRY_FOLIAGE);
+        BiomeColors.WATER_COLOR_RESOLVER = createForType(BiomeColors.WATER_COLOR_RESOLVER, ModifierTypes.WATER.get());
+        BiomeColors.DRY_FOLIAGE_COLOR_RESOLVER = createForType(BiomeColors.DRY_FOLIAGE_COLOR_RESOLVER, ModifierTypes.DRY_FOLIAGE.get());
     }
 
 
-    public static ColorResolver createForType(ColorResolver minecraftResolver, TerrainModifier<Color4I> type) {
+    public static ColorResolver createForType(ColorResolver minecraftResolver, TerrainModifierType<Color4I, ?> type) {
         return (biome, x, z) -> getColorAtLocation((int) x, (int) z, type).map(Color4I::rgb).orElse(minecraftResolver.getColor(biome, x, z));
     }
 
-    public static Optional<Color4I> getColorAtLocation(int x, int z, TerrainModifier<Color4I> type) {
+    public static Optional<Color4I> getColorAtLocation(int x, int z, TerrainModifierType<Color4I, ?> type) {
         return getDataForPosition(Minecraft.getInstance().level, x, z, type);
     }
 
-    public static <T> Optional<T> getDataForPosition(Level level, int x, int z, TerrainModifier<T> type) {
+    public static <T> Optional<T> getDataForPosition(Level level, int x, int z, TerrainModifierType<T, ?> type) {
         TerrainControllerAttachment terrainControllerAttachment = TerrainControllerAttachment.getAttachment(level);
         if(terrainControllerAttachment != null) {
             for (Map.Entry<BlockPos, ControllerData> blockPosMapEntry : terrainControllerAttachment.entrySet()) {

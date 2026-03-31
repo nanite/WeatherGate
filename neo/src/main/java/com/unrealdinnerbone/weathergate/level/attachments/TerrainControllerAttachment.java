@@ -6,9 +6,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.unrealdinnerbone.weathergate.WeatherGateCodecs;
 import com.unrealdinnerbone.weathergate.WeatherGateRegistry;
 import com.unrealdinnerbone.weathergate.level.attachments.terrain.ControllerData;
-import com.unrealdinnerbone.weathergate.level.attachments.terrain.ModifierState;
-import com.unrealdinnerbone.weathergate.level.attachments.terrain.StoredData;
 import com.unrealdinnerbone.weathergate.modifers.base.TerrainModifier;
+import com.unrealdinnerbone.weathergate.modifers.types.TerrainModifierType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -72,19 +71,20 @@ public class TerrainControllerAttachment {
 
     @SuppressWarnings("unchecked")
     @Nullable
-    public <T> T getModifierValue(BlockPos pos, TerrainModifier<T> modifier) {
+    public <T> T getModifierValue(BlockPos pos, TerrainModifierType<T, ?> modifier) {
         ControllerData controllerData = data.get(pos);
         if (controllerData == null) {
             return null;
         }
 
-        StoredData storedData = controllerData.getStoredData();
-        ModifierState<?> state = storedData.modifiers().get(modifier);
-        if (state == null || !state.enabled()) {
+        TerrainModifier<?> storedData = controllerData.getModifiers().get(modifier);
+        if (storedData == null) {
             return null;
         }
-
-        return (T) state.value();
+        if (!storedData.isEnabled()) {
+            return null;
+        }
+        return (T) storedData.getValue();
     }
 
 

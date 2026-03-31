@@ -1,6 +1,8 @@
 package com.unrealdinnerbone.weathergate.client.screen;
 
 import com.unrealdinnerbone.weathergate.modifers.base.TerrainModifier;
+import com.unrealdinnerbone.weathergate.modifers.types.TerrainModifierType;
+import com.unrealdinnerbone.weathergate.registry.ModifierTypes;
 import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.gui.widget.BaseScreen;
 import dev.ftb.mods.ftblibrary.client.gui.widget.ModalPanel;
@@ -19,12 +21,12 @@ public class EditButton<B> extends SimpleButton {
     private B activeValue;
     private final Component name;
 
-    public EditButton(TerrainControllerScreen screen2, Panel panel, TerrainModifier<B> terrainModifier, B activeValue, Consumer<B> newValueApplier) {
+    public EditButton(TerrainControllerScreen screen2, Panel panel, TerrainModifierType<B, ?> type, TerrainModifier<B> terrainModifier, B activeValue, Consumer<B> newValueApplier) {
         this.terrainModifier = terrainModifier;
         this.activeValue = activeValue;
-        Component name = Component.translatable(terrainModifier.id().toLanguageKey() + ".info");
+        Component name = Component.translatable(ModifierTypes.getId(type).toLanguageKey() + ".info");
         super(panel, name, Icons.ART, (a, b) -> {});
-        this.name = Component.translatable(terrainModifier.id().toLanguageKey());
+        this.name = Component.translatable(ModifierTypes.getId(type).toLanguageKey());
         setConsumer((button, mouseButton) -> {
             ModalPanel editPanel = terrainModifier.createEditPanel(screen2, this.activeValue, newValueApplier.andThen(newValue -> this.activeValue = newValue));
             BaseScreen gui = editPanel.getGui();
