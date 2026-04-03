@@ -10,25 +10,13 @@ license = "All Rights Reserved unless stated otherwise. Distribution permission 
     authors = "UnRealDinnerbone"
     description = "Gate the weather"
 [[dependencies.weathergate]]
-    modId = "neoforge"
-    required = true
-    versionRange = "[1.0,)"
-    ordering = "NONE"
-    side = "BOTH"
-#[[dependencies.weathergate]]
-#    modId = "minecraft"
-#    required = true
-#    versionRange = "[${minecraft_version}]"
-#    ordering = "NONE"
-#    side = "BOTH"
-[[dependencies.weathergate]]
     modId = "trenzalore"
     required = true
     versionRange = "[${trenzalore_version},)"
     ordering = "NONE"
     side = "BOTH"
-#[[dependencies.weathergate]]
-#    modId = "ftblibrary"
-#    side = "BOTH"
+[[dependencies.weathergate]]
+    modId = "ftblibrary"
+    side = "BOTH"
 [[mixins]]
     config = "weathergate.mixins.json"

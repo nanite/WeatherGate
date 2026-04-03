@@ -1,4 +1,3 @@
-### 26.1.0.1
+### 26.1.1.0
 
-- Broke Existing Settings Again
-- It's a Registry now
+- Update to 26.1.1
