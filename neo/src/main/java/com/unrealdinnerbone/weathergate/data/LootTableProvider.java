@@ -20,7 +20,7 @@ public class LootTableProvider extends BlockLootSubProvider {
     @Override
     protected void generate() {
         dropSelf(WeatherGateRegistry.SNOW_CATCHER.get());
-        dropSelf(WeatherGateRegistry.TERIANN_CONTROLLER.get());
+        this.add(WeatherGateRegistry.TERIANN_CONTROLLER.get(), noDrop());
     }
 
     @Override

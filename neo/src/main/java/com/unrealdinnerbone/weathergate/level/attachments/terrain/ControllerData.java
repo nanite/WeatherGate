@@ -14,6 +14,7 @@ import org.jspecify.annotations.NullMarked;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @NullMarked
 public class ControllerData {
@@ -41,7 +42,6 @@ public class ControllerData {
     );
 
     private int range;
-    private final Map<ResourceKey<TerrainModifierType<?, ?>>, TerrainModifier<?>> modifiersMap =  new HashMap<>();
     private final Map<TerrainModifierType<?, ?>, TerrainModifier<?>> modifiers;
 
     public ControllerData(int range, Map<TerrainModifierType<?, ?>, TerrainModifier<?>> modifiers) {
@@ -61,4 +61,15 @@ public class ControllerData {
         this.range = range;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ControllerData that = (ControllerData) o;
+        return range == that.range && Objects.equals(modifiers, that.modifiers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(range, modifiers);
+    }
 }

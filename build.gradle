@@ -51,6 +51,8 @@ publishMods {
         accessToken = providers.environmentVariable("CURSE_TOKEN")
         projectId = "${curse_id}"
         minecraftVersions.add("${minecraft_version}")
+        minecraftVersions.add("1.26.2")
+        minecraftVersions.add("1.26")
         requires {
             slug = "ftb-library-forge"
             slug = "trenzalore"

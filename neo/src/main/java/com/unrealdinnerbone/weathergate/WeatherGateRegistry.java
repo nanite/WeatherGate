@@ -13,6 +13,9 @@ import com.unrealdinnerbone.weathergate.block.TerrainControllerBlock;
 import com.unrealdinnerbone.weathergate.level.attachments.SnowCatcherAttachment;
 import com.unrealdinnerbone.weathergate.block.SnowCatcherBlock;
 import com.unrealdinnerbone.weathergate.level.attachments.TerrainControllerAttachment;
+import com.unrealdinnerbone.weathergate.level.attachments.terrain.ControllerData;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
@@ -42,6 +45,13 @@ public class WeatherGateRegistry implements IRegistry {
     public static final RegistryEntry.BlockEntry<TerrainControllerBlock> TERIANN_CONTROLLER = BLOCKS.register("terrain_controller", TerrainControllerBlock::new, properties -> properties.mapColor(MapColor.STONE).strength(5.0F, 6.0F).sound(SoundType.STONE));
     public static final RegistryEntry.ItemEntry<BlockItem> TERIANN_CONTROLLER_ITEM = ITEMS.registerBlockItem("terrain_controller", TERIANN_CONTROLLER, properties -> properties);
 
+    private static final RegistryObjects<DataComponentType<?>> DATA_COMPONENTS = Regeneration.create(WeatherGate.MOD_ID, Registries.DATA_COMPONENT_TYPE);
+
+    public static final RegistryEntry<DataComponentType<?>, DataComponentType<ControllerData>> CONTROLLER_DATA = DATA_COMPONENTS.register("controller_data", () ->
+            DataComponentType.<ControllerData>builder()
+                    .persistent(ControllerData.CODEC)
+                    .networkSynchronized(ControllerData.STREAM_CODEC)
+                    .build());
 
 
     @Override
@@ -51,7 +61,7 @@ public class WeatherGateRegistry implements IRegistry {
 
     @Override
     public List<AbstractRegistryObjects<?>> getRegistryObjects() {
-        return List.of(BLOCKS, ITEMS,  ATTACHMENT_TYPE);
+        return List.of(BLOCKS, ITEMS, ATTACHMENT_TYPE, DATA_COMPONENTS);
     }
 
     @Override
