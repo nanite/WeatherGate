@@ -52,18 +52,34 @@ public class WeatherGateClient
     }
 
     public static Optional<Color4I> getColorAtLocation(int x, int z, TerrainModifierType<Color4I, ?> type) {
+        Minecraft instance = Minecraft.getInstance();
+        if (instance.level == null) {
+            return Optional.empty();
+        }
         return getDataForPosition(Minecraft.getInstance().level, x, z, type);
     }
 
     public static <T> Optional<T> getDataForPosition(Level level, int x, int z, TerrainModifierType<T, ?> type) {
         TerrainControllerAttachment terrainControllerAttachment = TerrainControllerAttachment.getAttachment(level);
         if(terrainControllerAttachment != null) {
+            T bestValue = null;
+            int highestPriority = -1;
+
             for (Map.Entry<BlockPos, ControllerData> blockPosMapEntry : terrainControllerAttachment.entrySet()) {
                 BlockPos key = blockPosMapEntry.getKey();
-                if(RangeUtils.isWithinRange(key.getX(), key.getZ(), x, z, blockPosMapEntry.getValue().getRange())) {
-                    return Optional.ofNullable(terrainControllerAttachment.getModifierValue(key, type));
+                ControllerData data = blockPosMapEntry.getValue();
+
+                if (RangeUtils.isWithinRange(key.getX(), key.getZ(), x, z, data.getRange())) {
+                    T modifierValue = terrainControllerAttachment.getModifierValue(key, type);
+
+                    if (modifierValue != null && data.getPriory() > highestPriority) {
+                        bestValue = modifierValue;
+                        highestPriority = data.getPriory();
+                    }
                 }
             }
+
+            return Optional.ofNullable(bestValue);
         }
         return Optional.empty();
     }

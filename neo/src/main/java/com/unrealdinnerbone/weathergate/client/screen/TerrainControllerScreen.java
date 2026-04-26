@@ -148,6 +148,21 @@ public class TerrainControllerScreen extends AbstractButtonListScreen implements
                         ClientPacketDistributor.sendToServer(new UpdateControllerPacket(controllerPos, data));
                         Minecraft.getInstance().levelRenderer.allChanged();
                     }),
+                    new ContextMenuItem(Component.literal("Priority"), Icons.UP, (btn) -> {
+                        IntEditPanel floatEditPanel = new IntEditPanel(this, data.getPriory(), newValue -> {
+                            data.setPriory(newValue);
+                            GlobalPos controllerPos = GlobalPos.of(Minecraft.getInstance().player.level().dimension(), blockPos);
+                            ClientPacketDistributor.sendToServer(new UpdateControllerPacket(controllerPos, data));
+                            Minecraft.getInstance().levelRenderer.allChanged();
+                        });
+                        floatEditPanel.setLimits(0, 1000);
+                        BaseScreen gui = getGui();
+                        int absX = Math.min(gui.getMouseX(), gui.getWindow().getGuiScaledWidth() - floatEditPanel.width - 10);
+                        int absY = Math.min(gui.getMouseY(), gui.getWindow().getGuiScaledHeight() - floatEditPanel.height - 10);
+                        floatEditPanel.setPos(absX - floatEditPanel.getParent().getX(), absY - floatEditPanel.getParent().getY());
+                        gui.pushModalPanel(floatEditPanel);
+                        floatEditPanel.setExtraZlevel(100);
+                    }),
                     new ContextMenuItem(Component.literal("Range"), Icons.REFRESH, (btn) -> {
                         IntEditPanel floatEditPanel = new IntEditPanel(this, data.getRange(), newValue -> {
                             data.setRange(newValue);

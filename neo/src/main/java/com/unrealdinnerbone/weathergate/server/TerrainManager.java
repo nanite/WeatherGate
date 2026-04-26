@@ -24,7 +24,7 @@ public class TerrainManager {
             map.put(terrainModifier, o);
         }
 
-        attachment.setData(pos, new ControllerData(ControllerData.DEFAULT_RANGE, map));
+        attachment.setData(pos, new ControllerData(ControllerData.DEFAULT_RANGE, 1, map));
         attachment.save(level);
     }
 

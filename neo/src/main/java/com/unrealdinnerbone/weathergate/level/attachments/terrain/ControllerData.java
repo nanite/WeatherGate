@@ -9,7 +9,6 @@ import com.unrealdinnerbone.weathergate.registry.ModifierTypes;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceKey;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.HashMap;
@@ -22,11 +21,12 @@ public class ControllerData {
     public static final int DEFAULT_RANGE = 64;
 
     public static ControllerData defaultData() {
-        return new ControllerData(DEFAULT_RANGE, new HashMap<>());
+        return new ControllerData(DEFAULT_RANGE, 1, new HashMap<>());
     }
 
     public static final Codec<ControllerData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.INT.fieldOf("range").forGetter(ControllerData::getRange),
+            Codec.INT.optionalFieldOf("priory", 1).forGetter(ControllerData::getPriory),
             Codec.unboundedMap(WeatherGateRegistries.REGISTRY.byNameCodec(), ModifierTypes.CODEC).fieldOf("data").forGetter(ControllerData::getModifiers)
 
     ).apply(instance, ControllerData::new));
@@ -34,6 +34,8 @@ public class ControllerData {
     public static final StreamCodec<RegistryFriendlyByteBuf, ControllerData> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.INT,
             ControllerData::getRange,
+            ByteBufCodecs.INT,
+            ControllerData::getPriory,
             ByteBufCodecs.map(HashMap::new,
                     ByteBufCodecs.registry(WeatherGateRegistries.KEY),
                     ModifierTypes.STREAM_CODEC),
@@ -42,11 +44,13 @@ public class ControllerData {
     );
 
     private int range;
+    private int priory;
     private final Map<TerrainModifierType<?, ?>, TerrainModifier<?>> modifiers;
 
-    public ControllerData(int range, Map<TerrainModifierType<?, ?>, TerrainModifier<?>> modifiers) {
+    public ControllerData(int range, int priory, Map<TerrainModifierType<?, ?>, TerrainModifier<?>> modifiers) {
         this.range = range;
         this.modifiers = modifiers;
+        this.priory = priory;
     }
 
     public Map<TerrainModifierType<?, ?>, TerrainModifier<?>> getModifiers() {
@@ -61,15 +65,23 @@ public class ControllerData {
         this.range = range;
     }
 
+    public int getPriory() {
+        return priory;
+    }
+
+    public void setPriory(int priory) {
+        this.priory = priory;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         ControllerData that = (ControllerData) o;
-        return range == that.range && Objects.equals(modifiers, that.modifiers);
+        return range == that.range && that.priory == priory && Objects.equals(modifiers, that.modifiers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(range, modifiers);
+        return Objects.hash(range, priory, modifiers);
     }
 }
